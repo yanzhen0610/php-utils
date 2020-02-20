@@ -5,18 +5,37 @@ namespace Utils;
 trait LazyLoading
 {
     /**
-     * Key Value pairs for storing state of lazy loading
+     * Callbacks for keys
      *
      * @var array
      */
-    protected $lazyLoadingLoaded = [];
+    protected $callbacks = [];
 
     /**
-     * Key Value pairs for storing lazy loaded data
+     * Key Value pairs for storing state of cached key
      *
      * @var array
      */
-    protected $lazyLoadingData = [];
+    protected $cached_key = [];
+
+    /**
+     * Key Value pairs for storing cached data
+     *
+     * @var array
+     */
+    protected $cached_data = [];
+
+    /**
+     * Set callback for key.
+     *
+     * @param integer|string $key
+     * @param \Closure|callback|mixed $callback
+     * @return void
+     */
+    protected function setCallbackForKey($key, $callback)
+    {
+        $this->callbacks[$key] = $callback;
+    }
 
     /**
      * Lazy load the data from the callback. If the callback
@@ -24,13 +43,14 @@ trait LazyLoading
      * it'll return the result from the cache(for same key).
      *
      * @param integer|string $key
-     * @param \Closure|callback|mixed $callback
+     * @param \Closure|callback|null|mixed $callback
      * @return mixed
      */
-    protected function lazyLoad($key, $callback)
+    protected function lazyLoad($key, $callback = null)
     {
-        if (isset($this->lazyLoadingLoaded[$key])) {
-            return $this->lazyLoadingData[$key];
+        $callback = $this->callbacks[$key] = $callback ?? $this->callbacks[$key];
+        if (isset($this->cached_key[$key])) {
+            return $this->cached_data[$key];
         }
         return $this->forceLoad($key, $callback);
     }
@@ -42,10 +62,11 @@ trait LazyLoading
      * @param \Closure|callback|mixed $callback
      * @return mixed
      */
-    protected function forceLoad($key, $callback)
+    protected function forceLoad($key, $callback = null)
     {
-        $data = $this->lazyLoadingData[$key] = $callback();
-        $this->lazyLoadingLoaded[$key] = true;
+        $callback = $this->callbacks[$key] = $callback ?? $this->callbacks[$key];
+        $data = $this->cached_data[$key] = $callback();
+        $this->cached_key[$key] = true;
         return $data;
     }
 
@@ -57,6 +78,17 @@ trait LazyLoading
      */
     protected function resetLoadingKey($key)
     {
-        unset($this->lazyLoadingLoaded[$key]);
+        unset($this->cached_key[$key]);
+    }
+
+    /**
+     * Remove callback for the key
+     *
+     * @param integer|string $key
+     * @return void
+     */
+    protected function resetCallback($key)
+    {
+        unset($this->callbacks[$key]);
     }
 }
