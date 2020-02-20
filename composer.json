@@ -1,0 +1,19 @@
+{
+    "name": "yanzhen0610/php-utils",
+    "description": "Utils",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Yz.",
+            "email": "yanzhen610@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Utils\\": "src/utils"
+        }
+    }
+}
