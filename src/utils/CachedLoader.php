@@ -2,7 +2,7 @@
 
 namespace Utils;
 
-trait LazyLoading
+trait CachedLoader
 {
     /**
      * Callbacks for keys
@@ -46,7 +46,7 @@ trait LazyLoading
      * @param \Closure|callback|null|mixed $callback
      * @return mixed
      */
-    protected function lazyLoad($key, $callback = null)
+    protected function cachedLoading($key, $callback = null)
     {
         $callback = $this->callbacks[$key] = $callback ?? $this->callbacks[$key];
         if (isset($this->cached_key[$key])) {
@@ -76,7 +76,7 @@ trait LazyLoading
      * @param integer|string $key
      * @return void
      */
-    protected function resetLoadingKey($key)
+    protected function resetCachedKey($key)
     {
         unset($this->cached_key[$key]);
     }
