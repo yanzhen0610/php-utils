@@ -41,9 +41,9 @@ class SimpleBuilder
         if (substr($method, 0, 3) == 'set') {
             $property = Helper::snake(substr($method, 3));
 
-            return static::set($property, $args[0]);
+            return $this->set($property, $args[0]);
         }
-        return static::setter($method, ...$args);
+        return $this->setter($method, ...$args);
     }
 
     /**
